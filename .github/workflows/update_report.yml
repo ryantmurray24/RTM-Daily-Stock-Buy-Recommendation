@@ -40,10 +40,11 @@ jobs:
       - name: Generate report
         run: python generate_report.py
 
-      - name: Commit and push updated report
+     - name: Commit and push
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add index.html latest_data.json
           git diff --staged --quiet || git commit -m "Auto-update: $(TZ='America/New_York' date '+%Y-%m-%d %H:%M ET')"
           git push
