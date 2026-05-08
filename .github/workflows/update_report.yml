@@ -2,11 +2,9 @@ name: Update Market Report
 
 on:
   schedule:
-    # 9:30 AM ET = 13:30 UTC (EDT, Mar–Nov)
     - cron: '30 13 * * 1-5'
-    # 4:00 PM ET = 20:00 UTC (EDT, Mar–Nov)
     - cron: '0 20 * * 1-5'
-  workflow_dispatch:   # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,7 +12,6 @@ permissions:
 jobs:
   update-report:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,8 +28,7 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          restore-keys: ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -40,7 +36,7 @@ jobs:
       - name: Generate report
         run: python generate_report.py
 
-     - name: Commit and push
+      - name: Commit and push
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
