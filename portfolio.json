@@ -1,0 +1,38 @@
+{
+  "last_updated": "2026-05-08",
+  "accounts": [
+    {
+      "name": "Public Roth IRA",
+      "type": "roth_ira",
+      "positions": [
+        { "ticker": "VTI",  "label": "VTI",  "role": "us_equity",   "value": 18867.98 },
+        { "ticker": "VXUS", "label": "VXUS", "role": "intl_equity", "value": 14098.97 },
+        { "ticker": "SCHD", "label": "SCHD", "role": "other",       "value": 13287.41 }
+      ]
+    },
+    {
+      "name": "Schwab Trust Brokerage",
+      "type": "taxable",
+      "positions": [
+        { "ticker": "SCHB", "label": "SCHB (VTI equiv)", "role": "us_equity",   "value": 5098.38 },
+        { "ticker": "VXUS", "label": "VXUS",             "role": "intl_equity", "value": 3756.28 }
+      ]
+    },
+    {
+      "name": "Fidelity LLC Brokerage",
+      "type": "taxable",
+      "positions": [
+        { "ticker": "SCHB", "label": "SCHB (VTI equiv)", "role": "us_equity",   "value": 3586.71 },
+        { "ticker": "VXUS", "label": "VXUS",             "role": "intl_equity", "value": 1591.90 }
+      ]
+    },
+    {
+      "name": "Fidelity 401k (Omnicom)",
+      "type": "401k",
+      "positions": [
+        { "ticker": "84679P405", "label": "SP 500 INDEX PL CL D", "role": "us_equity",   "value": 101610.74 },
+        { "ticker": "85744A687", "label": "SS GACEQ EXUS IDX II", "role": "intl_equity", "value": 9700.70  }
+      ]
+    }
+  ]
+}

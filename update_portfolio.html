@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Update Portfolio — Macro-Core</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f4f5f7; color: #111; padding: 24px; font-size: 13px; }
+  .wrap { max-width: 700px; margin: 0 auto; }
+
+  .hdr { background: #fff; border-radius: 8px; padding: 18px 22px; margin-bottom: 16px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+  .hdr h1 { font-size: 17px; font-weight: 800; }
+  .hdr p  { font-size: 12px; color: #666; margin-top: 2px; }
+  .back-link { font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; }
+  .back-link:hover { text-decoration: underline; }
+
+  /* TOKEN SETUP */
+  .token-section { background: #fff8e6; border: 1px solid #e8c96a; border-left: 4px solid #d4a017; border-radius: 8px; padding: 16px 18px; margin-bottom: 16px; }
+  .token-section h3 { font-size: 13px; font-weight: 700; color: #7a5800; margin-bottom: 8px; }
+  .token-section p  { font-size: 12px; color: #7a5800; line-height: 1.5; margin-bottom: 10px; }
+  .token-section a  { color: #2563eb; }
+
+  /* ACCOUNT CARDS */
+  .account-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .account-head { padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #ebebeb; display: flex; align-items: center; gap: 10px; }
+  .account-name { font-size: 13px; font-weight: 700; flex: 1; }
+  .account-type { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+  .type-roth    { background: #e6f4ea; color: #1a6b35; }
+  .type-401k    { background: #edf2fb; color: #1d4ed8; }
+  .type-taxable { background: #f0f0f0; color: #555; }
+  .account-body { padding: 12px 16px; }
+
+  .position-row { display: grid; grid-template-columns: 1fr 1fr 120px; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .position-row:last-child { margin-bottom: 0; }
+  .pos-label { font-size: 12px; font-weight: 600; color: #333; }
+  .pos-role   { font-size: 10px; color: #888; margin-top: 1px; }
+  .pos-role.us   { color: #1d4ed8; }
+  .pos-role.intl { color: #1a6b35; }
+  .pos-role.other { color: #888; }
+
+  input[type="number"], input[type="text"], input[type="password"] {
+    width: 100%; border: 1px solid #ddd; border-radius: 5px;
+    padding: 7px 10px; font-size: 13px; background: #fff;
+    transition: border-color 0.15s;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, input[type="password"]:focus {
+    outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
+  }
+  .input-prefix { position: relative; }
+  .input-prefix span { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888; font-size: 13px; }
+  .input-prefix input { padding-left: 20px; }
+
+  /* SUMMARY */
+  .summary-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 18px; margin-bottom: 16px; }
+  .summary-card h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: #555; }
+  .summary-row .value { font-weight: 700; }
+  .drift-ok   { color: #1a6b35; }
+  .drift-warn { color: #9a6700; }
+  .drift-act  { color: #cc0000; }
+
+  /* ALLOC BAR */
+  .alloc-bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+  .alloc-us   { background: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; transition: width 0.3s; }
+  .alloc-intl { background: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; transition: width 0.3s; }
+  .alloc-other { background: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; transition: width 0.3s; }
+  .target-line { font-size: 11px; color: #888; margin-top: 4px; }
+
+  /* REBAL ACTION */
+  .rebal-action { background: #fff8e6; border: 1px solid #e8c96a; border-left: 4px solid #d4a017; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 12px; color: #5a3e00; line-height: 1.6; }
+  .rebal-action.ok  { background: #f0faf2; border-color: #86c99a; border-left-color: #1a6b35; color: #1a4d28; }
+  .rebal-action strong { font-weight: 700; }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-save {
+    flex: 1; background: #111; color: #fff; border: none;
+    border-radius: 6px; padding: 12px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-save:hover { background: #333; }
+  .btn-save:disabled { background: #999; cursor: not-allowed; }
+  .btn-secondary {
+    background: #fff; color: #111; border: 1px solid #ddd;
+    border-radius: 6px; padding: 12px 18px; font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* STATUS */
+  .status-msg { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; display: none; }
+  .status-msg.success { background: #e6f4ea; color: #1a6b35; border: 1px solid #86c99a; display: block; }
+  .status-msg.error   { background: #fde8e8; color: #8b0000; border: 1px solid #f5b0b0; display: block; }
+  .status-msg.loading { background: #edf2fb; color: #1d4ed8; border: 1px solid #93b4f0; display: block; }
+
+  .note { font-size: 11px; color: #888; margin-top: 6px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div>
+      <h1>📊 Update Portfolio Balances</h1>
+      <p>Enter current market values — report will update on next run</p>
+    </div>
+    <a href="index.html" class="back-link">← Back to Report</a>
+  </div>
+
+  <!-- TOKEN SETUP -->
+  <div class="token-section" id="tokenSection">
+    <h3>🔑 One-Time Setup — GitHub Token</h3>
+    <p>To save balances directly to your repo, enter a GitHub Personal Access Token with <strong>Contents: Read & Write</strong> permission. This is stored only in your browser — never sent anywhere except GitHub.</p>
+    <p><a href="https://github.com/settings/tokens/new?scopes=repo&description=MacroCore+Portfolio+Update" target="_blank">→ Click here to create a token</a> (select "repo" scope, set expiry to 1 year)</p>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;">
+      <button class="btn-secondary" onclick="saveToken()">Save Token</button>
+    </div>
+    <p class="note" id="tokenStatus"></p>
+  </div>
+
+  <!-- ACCOUNT FORMS (generated by JS) -->
+  <div id="accountForms"></div>
+
+  <!-- LIVE SUMMARY -->
+  <div class="summary-card">
+    <h3>Portfolio Summary</h3>
+    <div class="summary-row"><span class="label">Total US Equity (VTI equiv)</span><span class="value" id="sumUS">—</span></div>
+    <div class="summary-row"><span class="label">Total Intl Equity (VXUS equiv)</span><span class="value" id="sumIntl">—</span></div>
+    <div class="summary-row"><span class="label">Other Holdings (excl. from calc)</span><span class="value" id="sumOther">—</span></div>
+    <div class="summary-row"><span class="label">Total Portfolio (excl. other)</span><span class="value" id="sumTotal">—</span></div>
+    <div style="margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px;">
+        <span id="labelUS">US Equity</span><span id="labelIntl">Intl Equity</span>
+      </div>
+      <div class="alloc-bar">
+        <div class="alloc-us"   id="barUS"   style="width:60%;">60%</div>
+        <div class="alloc-intl" id="barIntl" style="width:40%;">40%</div>
+      </div>
+      <div class="target-line">Target: 60% US / 40% Intl</div>
+    </div>
+    <div id="rebalAction" class="rebal-action" style="display:none;"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-save" id="saveBtn" onclick="savePortfolio()">💾 Save to GitHub &amp; Update Report</button>
+  </div>
+  <div id="statusMsg" class="status-msg"></div>
+  <p class="note">Saving commits portfolio.json to your repo. The report will reflect updated balances on the next scheduled run (or trigger a manual run in GitHub Actions).</p>
+
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────────
+const REPO  = "ryantmurray24/RTM-Daily-Stock-Buy-Recommendation";
+const BRANCH = "main";
+const FILE_PATH = "portfolio.json";
+
+// ── PORTFOLIO DATA ─────────────────────────────────────────────────────────────
+const PORTFOLIO = {
+  accounts: [
+    {
+      name: "Public Roth IRA",
+      type: "roth_ira",
+      positions: [
+        { ticker: "VTI",  label: "VTI",               role: "us_equity",   value: 18867.98 },
+        { ticker: "VXUS", label: "VXUS",               role: "intl_equity", value: 14098.97 },
+        { ticker: "SCHD", label: "SCHD",               role: "other",       value: 13287.41 }
+      ]
+    },
+    {
+      name: "Schwab Trust Brokerage",
+      type: "taxable",
+      positions: [
+        { ticker: "SCHB", label: "SCHB (VTI equiv)",   role: "us_equity",   value: 5098.38 },
+        { ticker: "VXUS", label: "VXUS",               role: "intl_equity", value: 3756.28 }
+      ]
+    },
+    {
+      name: "Fidelity LLC Brokerage",
+      type: "taxable",
+      positions: [
+        { ticker: "SCHB", label: "SCHB (VTI equiv)",   role: "us_equity",   value: 3586.71 },
+        { ticker: "VXUS", label: "VXUS",               role: "intl_equity", value: 1591.90 }
+      ]
+    },
+    {
+      name: "Fidelity 401k (Omnicom)",
+      type: "401k",
+      positions: [
+        { ticker: "84679P405", label: "SP 500 INDEX PL CL D", role: "us_equity",   value: 101610.74 },
+        { ticker: "85744A687", label: "SS GACEQ EXUS IDX II", role: "intl_equity", value: 9700.70  }
+      ]
+    }
+  ]
+};
+
+// ── TOKEN MANAGEMENT ────────────────────────────────────────────────────────────
+function saveToken() {
+  const t = document.getElementById("githubToken").value.trim();
+  if (!t) return alert("Please enter a token.");
+  localStorage.setItem("gh_token", t);
+  document.getElementById("tokenStatus").textContent = "✅ Token saved in browser.";
+  document.getElementById("tokenSection").style.borderLeftColor = "#1a6b35";
+}
+
+function getToken() {
+  const stored = localStorage.getItem("gh_token");
+  if (stored) {
+    document.getElementById("githubToken").value = "••••••••••••••••••••";
+    document.getElementById("tokenStatus").textContent = "✅ Token loaded from browser storage.";
+  }
+  return stored;
+}
+
+// ── BUILD FORMS ────────────────────────────────────────────────────────────────
+function buildForms() {
+  const container = document.getElementById("accountForms");
+  const typeLabels = { roth_ira: "Roth IRA", "401k": "401k", taxable: "Taxable" };
+  const typeClass  = { roth_ira: "type-roth", "401k": "type-401k", taxable: "type-taxable" };
+  const roleLabel  = { us_equity: "US Equity (VTI equiv)", intl_equity: "Intl Equity (VXUS equiv)", other: "Excluded from allocation" };
+  const roleClass  = { us_equity: "us", intl_equity: "intl", other: "other" };
+
+  PORTFOLIO.accounts.forEach((acct, ai) => {
+    const card = document.createElement("div");
+    card.className = "account-card";
+    card.innerHTML = `
+      <div class="account-head">
+        <div class="account-name">${acct.name}</div>
+        <span class="account-type ${typeClass[acct.type]}">${typeLabels[acct.type]}</span>
+      </div>
+      <div class="account-body">
+        ${acct.positions.map((pos, pi) => `
+          <div class="position-row">
+            <div>
+              <div class="pos-label">${pos.label}</div>
+              <div class="pos-role ${roleClass[pos.role]}">${roleLabel[pos.role]}</div>
+            </div>
+            <div></div>
+            <div class="input-prefix">
+              <span>$</span>
+              <input type="number" step="0.01" min="0"
+                id="val_${ai}_${pi}"
+                value="${pos.value.toFixed(2)}"
+                oninput="recalculate()"
+                placeholder="0.00">
+            </div>
+          </div>
+        `).join("")}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ── RECALCULATE SUMMARY ────────────────────────────────────────────────────────
+function recalculate() {
+  let totalUS = 0, totalIntl = 0, totalOther = 0;
+
+  PORTFOLIO.accounts.forEach((acct, ai) => {
+    acct.positions.forEach((pos, pi) => {
+      const v = parseFloat(document.getElementById(`val_${ai}_${pi}`).value) || 0;
+      if (pos.role === "us_equity")   totalUS    += v;
+      if (pos.role === "intl_equity") totalIntl  += v;
+      if (pos.role === "other")       totalOther += v;
+    });
+  });
+
+  const total = totalUS + totalIntl;
+  const usPct   = total > 0 ? (totalUS   / total * 100) : 60;
+  const intlPct = total > 0 ? (totalIntl / total * 100) : 40;
+  const drift   = usPct - 60;
+
+  document.getElementById("sumUS").textContent    = fmt(totalUS);
+  document.getElementById("sumIntl").textContent  = fmt(totalIntl);
+  document.getElementById("sumOther").textContent = fmt(totalOther);
+  document.getElementById("sumTotal").textContent = fmt(total);
+
+  document.getElementById("barUS").style.width   = usPct.toFixed(1) + "%";
+  document.getElementById("barIntl").style.width = intlPct.toFixed(1) + "%";
+  document.getElementById("barUS").textContent   = usPct.toFixed(1) + "%";
+  document.getElementById("barIntl").textContent = intlPct.toFixed(1) + "%";
+
+  document.getElementById("labelUS").textContent   = `US Equity: ${usPct.toFixed(1)}%`;
+  document.getElementById("labelIntl").textContent = `Intl Equity: ${intlPct.toFixed(1)}%`;
+
+  // Rebalance action
+  const actionDiv = document.getElementById("rebalAction");
+  const absDrift  = Math.abs(drift);
+  actionDiv.style.display = "block";
+
+  if (absDrift < 5) {
+    actionDiv.className = "rebal-action ok";
+    actionDiv.innerHTML = `✅ <strong>Within 5% threshold — no rebalancing needed.</strong> Next check: January 2027.`;
+  } else {
+    const targetUS   = total * 0.60;
+    const targetIntl = total * 0.40;
+    const sellUS     = totalUS   - targetUS;
+    const buyIntl    = targetIntl - totalIntl;
+    actionDiv.className = "rebal-action";
+    actionDiv.innerHTML = `
+      ⚠️ <strong>Drift ${drift > 0 ? "+" : ""}${drift.toFixed(1)}% — Rebalancing action required in January.</strong><br><br>
+      To reach 60/40 target:<br>
+      • Sell <strong>${fmt(sellUS)}</strong> of US equity<br>
+      • Buy <strong>${fmt(buyIntl)}</strong> of Intl equity<br><br>
+      <strong>Execute in tax-advantaged accounts first</strong> (401k → Roth IRA → taxable last).
+      ${absDrift >= 10 ? "<br>⚠️ Drift exceeds 10% — taxable accounts should also be rebalanced." : ""}`;
+  }
+}
+
+function fmt(v) {
+  return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── SAVE TO GITHUB ────────────────────────────────────────────────────────────
+async function savePortfolio() {
+  const token = localStorage.getItem("gh_token");
+  if (!token) {
+    showStatus("Please save a GitHub token first (see setup above).", "error");
+    return;
+  }
+
+  // Collect current values
+  const updated = JSON.parse(JSON.stringify(PORTFOLIO));
+  updated.accounts.forEach((acct, ai) => {
+    acct.positions.forEach((pos, pi) => {
+      pos.value = parseFloat(document.getElementById(`val_${ai}_${pi}`).value) || 0;
+    });
+  });
+  updated.last_updated = new Date().toISOString().split("T")[0];
+
+  showStatus("Saving to GitHub...", "loading");
+  document.getElementById("saveBtn").disabled = true;
+
+  try {
+    // Get current file SHA
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+
+    const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, { headers });
+    const getJson = await getRes.json();
+    const sha = getJson.sha;
+
+    // Commit updated file
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
+    const putRes  = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Portfolio update: ${updated.last_updated}`,
+        content: content,
+        sha: sha,
+        branch: BRANCH
+      })
+    });
+
+    if (putRes.ok) {
+      showStatus("✅ Portfolio saved! The report will reflect updated balances on the next scheduled run. You can also trigger a manual run in GitHub Actions.", "success");
+      // Update local PORTFOLIO values
+      PORTFOLIO.accounts.forEach((acct, ai) => {
+        acct.positions.forEach((pos, pi) => { pos.value = updated.accounts[ai].positions[pi].value; });
+      });
+    } else {
+      const err = await putRes.json();
+      showStatus(`❌ GitHub error: ${err.message}`, "error");
+    }
+  } catch (e) {
+    showStatus(`❌ Error: ${e.message}`, "error");
+  }
+
+  document.getElementById("saveBtn").disabled = false;
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById("statusMsg");
+  el.textContent = msg;
+  el.className = `status-msg ${type}`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+buildForms();
+getToken();
+recalculate();
+</script>
+</body>
+</html>
